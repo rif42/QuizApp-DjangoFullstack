@@ -1,0 +1,9 @@
+<h1>Question: {{ question.question_text }}</h1>
+
+{% if selected_choice %}
+    <h2>Selected Choice: {{ selected_choice.choice_text }}</h2>
+{% else %}
+    <h2>No choice selected.</h2>
+{% endif %}
+
+<a href="{% url 'quiz:detail' question.id %}">Answer again?</a>
