@@ -11,8 +11,19 @@ class IndexView(generic.ListView):
     context_object_name = "latest_question_list"
 
     def get_queryset(self):
-        """Return the last five published questions."""
-        return Question.objects.order_by("-pub_date")[:5]
+        questions = Question.objects.all()
+        choices = Choice.objects.all()
+        combined_data = []
+
+        for question in questions:
+            question_choices = choices.filter(question=question)
+            combined_data.append({
+                'question': question,
+                'choices': question_choices
+            })
+
+        return combined_data
+    
     
 class DetailView(generic.DetailView):
     model = Question
