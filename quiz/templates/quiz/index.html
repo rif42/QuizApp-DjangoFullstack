@@ -6,15 +6,21 @@
     <title>Quiz List</title>
 </head>
 <body>
-    {% block content %}
     <h1>Question List</h1>
-    {% for item in latest_question_list %}
+
+    <form method="post" action="{% url 'check_answers' %}">
+        {% csrf_token %} {% for item in latest_question_list %}
         <h2>{{ item.question.question_text }}</h2>
-        <ul>
-            {% for choice in item.choices %}
-                <li>{{ choice.choice_text }}</li>
-            {% endfor %}
-        </ul>
-    {% endfor %}
-{% endblock %}
+        {% for choice in item.choices %}
+        <input type="radio" name="choice" value="{{ choice.id }}" />
+        <label>{{ choice.choice_text }}</label><br />
+        {% endfor %}
+        <input type="hidden" name="question_id" value="{{ item.question.id }}" />
+        {% endfor %}
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if score is not None %}
+    <h3>Your score: {{ score }}</h3>
+    {% endif %}
 </body>

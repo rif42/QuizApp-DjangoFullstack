@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.http import Http404
 from django.urls import reverse
 from django.views import generic
+from django.views import View
 from .models import Question, Choice
 
 class IndexView(generic.ListView):
@@ -23,7 +24,25 @@ class IndexView(generic.ListView):
             })
 
         return combined_data
-    
+
+class CheckAnswersView(View):
+    def post(self, request):
+        question_ids = request.POST.getlist('question_id')
+        selected_choices = request.POST.getlist('choice')
+
+        score = 0
+        for question_id, selected_choice_id in zip(question_ids, selected_choices):
+            question = get_object_or_404(Question, pk=question_id)
+            selected_choice = get_object_or_404(Choice, pk=selected_choice_id)
+
+            if selected_choice == question.correct_choice:
+                score += 1
+
+        context = {
+            'score': score,
+        }
+        return render(request, 'quiz/results.html', context)
+
     
 class DetailView(generic.DetailView):
     model = Question
